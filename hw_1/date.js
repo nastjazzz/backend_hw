@@ -7,46 +7,64 @@ const validFlags = ['year', 'y', 'date', 'd', 'month', 'm'];
 
 const getCommandAnswer = (option, command, counter) => {
   const date = new Date();
-  if (option === 'm' || option === 'month') {
-    return command === 'sub'
-      ? new Date(date.setMonth(date.getMonth() - counter)).getMonth() + 1 + ' '
-      : new Date(date.setMonth(date.getMonth() + counter)).getMonth() + 1 + ' ';
-  }
-  if (option === 'y' || option === 'year') {
-    return command === 'sub'
-      ? date.getFullYear() - counter + ' '
-      : date.getFullYear() + counter + ' ';
-  } else if (option === 'd' || option === 'date') {
-    return command === 'sub'
-      ? new Date(date.setDate(date.getDate() - counter)).getDate() + ' '
-      : new Date(date.setDate(date.getDate() + counter)).getDate() + ' ';
+  if (counter) {
+    if (option === 'm' || option === 'month') {
+      return command === 'sub'
+        ? new Date(date.setMonth(date.getMonth() - counter)).getMonth() +
+            1 +
+            ' '
+        : new Date(date.setMonth(date.getMonth() + counter)).getMonth() +
+            1 +
+            ' ';
+    }
+    if (option === 'y' || option === 'year') {
+      return command === 'sub'
+        ? date.getFullYear() - counter + ' '
+        : date.getFullYear() + counter + ' ';
+    } else if (option === 'd' || option === 'date') {
+      return command === 'sub'
+        ? new Date(date.setDate(date.getDate() - counter)).getDate() + ' '
+        : new Date(date.setDate(date.getDate() + counter)).getDate() + ' ';
+    }
+  } else {
+    console.log('какая-то хрень с командой');
+    return '';
   }
 };
 
-const getCommands = (commands, otherArgv, date, readyString) => {
+const getCommands = (commands, otherArgv, readyString) => {
   commands.forEach((command, index) => {
-    const [option, counter] = otherArgv[index];
-    if (validFlags.includes(option)) {
-      if (typeof counter !== 'object') {
-        readyString = readyString + getCommandAnswer(option, command, counter);
+    if (otherArgv[index]) {
+      const [option, counter] = otherArgv[index];
+      if (validFlags.includes(option)) {
+        if (typeof counter !== 'object') {
+          readyString =
+            readyString + getCommandAnswer(option, command, counter);
+        } else {
+          const newCounter = counter[index];
+          readyString =
+            readyString + getCommandAnswer(option, command, newCounter);
+        }
       } else {
-        const newCounter = counter[index];
-        readyString =
-          readyString + getCommandAnswer(option, command, newCounter);
-      }
-    } else {
-      if (option === '$0') {
-        const [option, counter] = otherArgv[index - 1];
-        const newCounter = counter[index];
-        readyString =
-          readyString + getCommandAnswer(option, command, newCounter);
+        if (option === '$0' && otherArgv[index - 1]) {
+          const [option, counter] = otherArgv[index - 1];
+          const newCounter = counter[index];
+          readyString =
+            readyString + getCommandAnswer(option, command, newCounter);
+        }
       }
     }
   });
-  console.log(readyString);
+  if (readyString.length) {
+    console.log(readyString);
+  } else {
+    console.log('какая-то хрень с командой');
+  }
 };
 
-const printValue = (flags, date) => {
+const printValue = (flags) => {
+  const date = new Date();
+
   let printedValues = {
     year: false,
     month: false,
@@ -85,7 +103,6 @@ const parceFlags = (argv) => {
   let readyString = '';
   let flags = {};
 
-  const date = new Date();
   for (let key in argv) {
     if (
       key === '_' &&
@@ -93,14 +110,14 @@ const parceFlags = (argv) => {
     ) {
       const [rawCommand, ...otherArgv] = Object.entries(argv);
       const [_, commands] = rawCommand;
-      getCommands(commands, otherArgv, date, readyString);
+      getCommands(commands, otherArgv, readyString);
       process.exit(0);
     }
     if (validFlags.includes(key)) {
       flags[key] = argv[key];
     }
   }
-  printValue(flags, date);
+  printValue(flags);
 };
 
 parceFlags(argv);

@@ -3,121 +3,57 @@ const yargs = require('yargs/yargs');
 const { hideBin } = require('yargs/helpers');
 const argv = yargs(hideBin(process.argv)).argv;
 
-const validFlags = ['year', 'y', 'date', 'd', 'month', 'm'];
+const countDate = (cmd, number, value) => {
+  return cmd === 'add' ? number + value : number - value;
+};
 
-const getCommandAnswer = (option, command, counter) => {
+const isCommandPresent = (commandsArr) => {
+  return commandsArr.includes('add') || commandsArr.includes('sub');
+};
+
+const getCmdAnswer = (cmd, option, value, date) => {
+  if (option === 'y') {
+    console.log(
+      new Date(
+        date.setFullYear(countDate(cmd, date.getFullYear(), value))
+      ).toLocaleDateString()
+    );
+  }
+  if (option === 'm') {
+    console.log(
+      new Date(
+        date.setMonth(countDate(cmd, date.getMonth(), value))
+      ).toLocaleDateString()
+    );
+  }
+  if (option === 'd') {
+    console.log(
+      new Date(
+        date.setDate(countDate(cmd, date.getDate(), value))
+      ).toLocaleDateString()
+    );
+  }
+};
+
+const parseFlags = () => {
   const date = new Date();
-  if (counter) {
-    if (option === 'm' || option === 'month') {
-      return command === 'sub'
-        ? new Date(date.setMonth(date.getMonth() - counter)).getMonth() +
-            1 +
-            ' '
-        : new Date(date.setMonth(date.getMonth() + counter)).getMonth() +
-            1 +
-            ' ';
-    }
-    if (option === 'y' || option === 'year') {
-      return command === 'sub'
-        ? date.getFullYear() - counter + ' '
-        : date.getFullYear() + counter + ' ';
-    } else if (option === 'd' || option === 'date') {
-      return command === 'sub'
-        ? new Date(date.setDate(date.getDate() - counter)).getDate() + ' '
-        : new Date(date.setDate(date.getDate() + counter)).getDate() + ' ';
-    }
+  const isCmdPresent = isCommandPresent(argv._);
+
+  if (argv.y || argv.year) {
+    isCmdPresent
+      ? getCmdAnswer(...argv._, 'y', argv.y || argv.year, date)
+      : console.log(date.getFullYear());
+  } else if (argv.month || argv.m) {
+    isCmdPresent
+      ? getCmdAnswer(...argv._, 'm', argv.month || argv.m, date)
+      : console.log(date.getMonth() + 1);
+  } else if (argv.d || argv.date) {
+    isCmdPresent
+      ? getCmdAnswer(...argv._, 'd', argv.d || argv.date, date)
+      : console.log(date.getDate());
   } else {
-    console.log('какая-то хрень с командой');
-    return '';
+    console.log(date.toLocaleDateString());
   }
 };
 
-const getCommands = (commands, otherArgv, readyString) => {
-  commands.forEach((command, index) => {
-    if (otherArgv[index]) {
-      const [option, counter] = otherArgv[index];
-      if (validFlags.includes(option)) {
-        if (typeof counter !== 'object') {
-          readyString =
-            readyString + getCommandAnswer(option, command, counter);
-        } else {
-          const newCounter = counter[index];
-          readyString =
-            readyString + getCommandAnswer(option, command, newCounter);
-        }
-      } else {
-        if (option === '$0' && otherArgv[index - 1]) {
-          const [option, counter] = otherArgv[index - 1];
-          const newCounter = counter[index];
-          readyString =
-            readyString + getCommandAnswer(option, command, newCounter);
-        }
-      }
-    }
-  });
-  if (readyString.length) {
-    console.log(readyString);
-  } else {
-    console.log('какая-то хрень с командой');
-  }
-};
-
-const printValue = (flags) => {
-  const date = new Date();
-
-  let printedValues = {
-    year: false,
-    month: false,
-    date: false,
-  };
-  let readyString = '';
-
-  if (!Object.keys(flags).length) {
-    console.log(date.toLocaleString());
-  } else {
-    for (let key in flags) {
-      if (key === 'year' || key === 'y') {
-        if (!printedValues['year']) {
-          readyString = readyString + date.getFullYear() + ' ';
-          printedValues['year'] = true;
-        }
-      }
-      if (key === 'm' || key === 'month') {
-        if (!printedValues['month']) {
-          readyString = readyString + (date.getMonth() + 1) + ' ';
-          printedValues['month'] = true;
-        }
-      }
-      if (key === 'date' || key === 'd') {
-        if (!printedValues['date']) {
-          readyString = readyString + date.getDate() + ' ';
-          printedValues['date'] = true;
-        }
-      }
-    }
-  }
-  console.log(readyString);
-};
-
-const parceFlags = (argv) => {
-  let readyString = '';
-  let flags = {};
-
-  for (let key in argv) {
-    if (
-      key === '_' &&
-      (argv[key].includes('add') || argv[key].includes('sub'))
-    ) {
-      const [rawCommand, ...otherArgv] = Object.entries(argv);
-      const [_, commands] = rawCommand;
-      getCommands(commands, otherArgv, readyString);
-      process.exit(0);
-    }
-    if (validFlags.includes(key)) {
-      flags[key] = argv[key];
-    }
-  }
-  printValue(flags);
-};
-
-parceFlags(argv);
+parseFlags();

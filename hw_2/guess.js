@@ -21,21 +21,23 @@ const startGame = () => {
   let int = getRandomInt(0, 100);
 
   rl.on('line', (data) => {
+    const dataNumber = Number(data);
+
     if (data.startsWith('range:')) {
-      const [_, min, max] = data.split(' ');
-      if (
-        (Number(min) || Number(min) === 0) &&
-        (Number(max) || Number(max) == 0)
-      ) {
-        int = getRandomInt(Number(min), Number(max));
+      const [_, minStr, maxStr] = data.split(' ');
+      const min = Number(minStr);
+      const max = Number(maxStr);
+
+      if ((min || min === 0) && (max || max === 0)) {
+        int = getRandomInt(min, max);
       } else {
-        console.log(redBright('Задай корректный диапазон значений!'));
+        console.log('Задай корректный диапазон значений!');
       }
-    } else if (Number(data) || Number(data) === 0) {
-      if (Number(data) > int) console.log('Меньше');
-      if (Number(data) < int) console.log('Больше');
-      if (Number(data) === int) {
-        console.log(`Отгадано число ${Number(data)}`);
+    } else if (dataNumber || dataNumber === 0) {
+      if (dataNumber > int) console.log('Меньше');
+      if (dataNumber < int) console.log('Больше');
+      if (dataNumber === int) {
+        console.log(`Отгадано число ${dataNumber}`);
         rl.question(
           `Если хочешь продолжить, то введи restart, если нет - exit\n`,
           (answer) => {
@@ -56,7 +58,7 @@ const startGame = () => {
   rl.on('SIGINT', () => {
     rl.question('Ты уверен, что хочешь выйти?', (answer) => {
       if (answer.match(/^y(es)?$/i) || answer === 'да' || answer === '') {
-        rl.pause();
+        rl.close();
       } else {
         console.log('Тогда продолжаем играть!');
       }

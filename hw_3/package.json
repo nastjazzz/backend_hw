@@ -1,0 +1,11 @@
+{
+  "name": "onpoint-backend-test-zamashnyuk-n",
+  "version": "1.0.2",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./index.js"
+  },
+  "author": "",
+  "license": "ISC"
+}

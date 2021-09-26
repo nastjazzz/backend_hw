@@ -1,0 +1,1 @@
+[{"result":"win"},{"result":"win"},{"result":"lose"},{"result":"win"},{"result":"win"},{"result":"win"}]

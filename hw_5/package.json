@@ -1,0 +1,17 @@
+{
+  "name": "hw_5",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "bin": {
+    "weather": "index.js"
+  },
+  "scripts": {
+    "dev": "node -r dotenv/config ./index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^10.0.0"
+  }
+}

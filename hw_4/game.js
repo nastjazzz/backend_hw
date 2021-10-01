@@ -63,7 +63,7 @@ const startGame = () => {
     rl.on('line', (data) => {
       let result = '';
       const dataNumber = Number(data);
-      console.log({ number, dataNumber });
+      // console.log({ number, dataNumber });
 
       if (dataNumber || dataNumber === 0) {
         if (dataNumber === number) {

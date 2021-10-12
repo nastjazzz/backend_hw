@@ -14,7 +14,7 @@ const addNewBook = (requestData, books) => {
 };
 
 const isObjEmpty = (obj) => {
-  return Object.keys(obj).length === 0;
+  return obj && Object.keys(obj).length === 0;
 };
 
 export { findBookById, findBookIndex, addNewBook, isObjEmpty };

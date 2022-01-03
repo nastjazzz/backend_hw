@@ -1,0 +1,22 @@
+extends ../layout.pug
+
+block variables
+  - var customTitle = 'Информация о книге'
+
+block content 
+  .row.justify-content-md-center 
+    .col-sm-7
+      .card.mb-3
+        .row.g-0
+          .col-md-4
+            if (foundBook.cover)
+              img.img-fluid.rounded-start(src=foundBook.cover)
+            else 
+              img.img-fluid.rounded-start(src="...")
+          .col-md-8
+            h5.card-header= foundBook.title
+            .card-body
+              p.card-text= foundBook.authors
+              p.card-text= foundBook.description
+              a.btn.btn-primary(href="/update/"+ foundBook.id) Редактировать
+      

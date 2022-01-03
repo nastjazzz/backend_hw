@@ -1,0 +1,30 @@
+extends ../layout.pug
+
+block variables
+  - var customTitle = 'Создать книгу'
+
+block head 
+
+block content
+  +pageTitle("Добавить книгу")
+  .row.justify-content-md-center 
+    .col-sm-5
+
+      form.mt-5
+        .mb-2
+          label.form-label(for="book-name" ) Название
+          input.form-control(type="text" id="book-name" required)
+        .mb-2
+          label.form-label(for="authors" ) Авторы
+          input.form-control(type="text" id="authors" required)
+        .mb-5
+          label.form-label Описание
+          textarea.form-control(type="text" rows="3")
+        .mb-5
+          label.form-label(for="formFile") Обложка
+          input.form-control(type="file" id="formFile")
+
+      button(type="submit").btn.btn-primary Добавить
+
+block scripts 
+  script(src='update/index.js')

@@ -1,0 +1,30 @@
+extends ../layout.pug
+
+block variables
+  - var customTitle = 'Редактировать книгу'
+
+block head 
+
+block content
+  +pageTitle("Редактировать книгу")
+  .row.justify-content-md-center 
+    .col-sm-5
+
+      form.mt-5
+        .mb-2
+          label.form-label(for="name") Название
+          input.form-control(type="text" id="name" value= foundBook.title)
+        .mb-2
+          label.form-label(for="authors") Авторы
+          input.form-control(type="text" id="authors" value= foundBook.authors)
+        .mb-5
+          label.form-label Описание
+          textarea.form-control(type="text" rows="3" value= foundBook.description)
+        .mb-5
+          label.form-label(for="formFile") Обложка
+          input.form-control(type="file" id="formFile")
+
+      button(type="submit").btn.btn-primary Сохранить
+
+block scripts 
+  script(src='/update/update.js')

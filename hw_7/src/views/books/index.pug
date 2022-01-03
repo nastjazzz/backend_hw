@@ -1,0 +1,28 @@
+extends ../layout.pug
+
+block variables
+  - var customTitle = 'Книги'
+
+block head 
+  //- link(href="styles.css" type="text/css" rel="stylesheet")
+
+block content 
+  +pageTitle("Книги")
+  .row.row-cols-md-2.g-5
+    each book in allBooks 
+      .col
+        .card.h-100
+          .row.g-0.h-100
+            .col-md-4.border-end
+              if (book.cover)
+                img.img-fluid.rounded-start(src=book.cover)
+              else 
+                img.img-fluid.rounded-start(src="...")
+            .col-md-8.d-flex.flex-column
+              h5.card-header= book.title
+              .card-body
+                p.card-text= book.authors
+                p.card-text= book.description
+              .card-footer
+                a.btn.btn-primary(href="/book/"+book.id) Просмотр
+

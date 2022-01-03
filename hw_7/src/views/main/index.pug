@@ -1,0 +1,9 @@
+extends ../layout.pug
+
+block variables
+  - var customTitle = 'Главная'
+
+block content
+  +pageTitle("Главная")
+  a(href="/books").btn.btn-primary Просмотреть все книги
+  a(href="/create").btn.btn-primary.mx-5 Добавить книгу

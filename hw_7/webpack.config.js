@@ -33,12 +33,12 @@ const defaultConfig = {
 const configs = ['create', 'update'].map((viewName) => {
   return {
     entry: {
-      index: `./src/views/${viewName}/assets/index.js`,
+      index: `./src/views/pages/${viewName}/assets/index.js`,
     },
     mode: 'production',
     output: {
       path: path.resolve(__dirname, `./public/${viewName}/`),
-      filename: '[name].js',
+      filename: `[name].js`,
     },
     ...defaultConfig,
   };

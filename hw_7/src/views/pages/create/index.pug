@@ -1,0 +1,14 @@
+extends ../../layout.pug
+
+block variables
+  - var customTitle = 'Создать книгу'
+
+
+block content
+  +pageTitle("Добавить книгу")
+  .row.justify-content-md-center 
+    .col-sm-7
+      +form(false, "form-create-book")
+
+block scripts 
+  script(src='/create/index.js')

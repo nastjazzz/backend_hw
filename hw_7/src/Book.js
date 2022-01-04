@@ -1,34 +1,56 @@
-const { findBookById, findBookIndex } = require('./utils.js');
-const books = require('./data/books.js');
-const errorHandler = require('./server/errorHandler.js');
+const dataBooks = require('./data/books.js');
 
 class Book {
   getAllBooks() {
-    return books;
+    return dataBooks;
   }
+
+  findBookById = (id, books) => {
+    // const books = this.getAllBooks();
+    return books.find((book) => Number(id) === Number(book.id));
+  };
+
+  findBookIndex = (id, books) => {
+    // const books = this.getAllBooks();
+    return books.findIndex((book) => Number(id) === Number(book.id));
+  };
 
   getBookById(id) {
-    const foundBook = findBookById(id, books);
-
-    return foundBook ? foundBook : 'Сорян, нет книги с таким id';
+    const books = this.getAllBooks();
+    const foundBook = this.findBookById(id, books);
+    return foundBook ? foundBook : -1;
   }
 
-  updateBookById(id) {
-    // if (isObjEmpty(req.body))
-    //   return errorHandler(res, 400, 'Нет данных для редактирования книги!');
+  async updateBookById(id, { title, authors, description, file }) {
+    const books = this.getAllBooks();
+    const foundId = this.findBookIndex(id, books);
 
-    // const { id } = req.params;
-    // const requestData = req.body;
+    if (foundId === -1) return -1;
 
-    const foundId = findBookIndex(id, books);
+    books[foundId] = {
+      ...books[foundId],
+      title,
+      authors: [authors],
+      description,
+      cover: file ? `/uploads/${file}` : books[foundId].cover,
+    };
+    return foundId + 1;
+  }
 
-    if (foundId !== -1) {
-      books[foundId] = { ...books[foundId], ...requestData };
-      // res.send('Отредактировано!');
-      return 'Отредактировано!';
-    } else {
-      return 'Сорян, нет книги с таким id';
-    }
+  async createNewBook({ title, authors, description, file }) {
+    const books = this.getAllBooks();
+    const newBookId = books.length + 1;
+
+    const newBook = {
+      id: newBookId,
+      title,
+      authors: [authors],
+      description,
+      cover: `/uploads/${file}`,
+    };
+    books.push(newBook);
+
+    return newBookId;
   }
 }
 

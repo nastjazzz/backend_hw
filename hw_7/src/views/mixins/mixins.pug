@@ -1,2 +1,35 @@
 mixin pageTitle(text)
   h1.px-3.py-4= text 
+
+mixin cover(cover)
+  if (cover)
+    img.img-fluid.rounded-start(src=cover)
+  else 
+    img.img-fluid.rounded-start(src="http://s003.radikal.ru/i202/1405/45/86a3a577fba4.png")
+
+
+mixin form(showValue, className)
+  form.mt-5(class= className)
+    .mb-2
+      label.form-label(for="name") Название
+      if (showValue)
+        input.form-control(type="text" id="name" name="title" value= book.title required)
+      else
+        input.form-control(type="text" id="name" name="title" required)
+    .mb-2
+      label.form-label(for="authors") Авторы
+      if (showValue)
+        input.form-control(type="text" id="authors" name="authors" value= book.authors.join(", ") required)
+      else
+        input.form-control(type="text" id="authors" name="authors" required)
+    .mb-5
+      label.form-label Описание
+      if (showValue)
+        textarea.form-control(type="text" rows="10" name="description")= book.description
+      else 
+        textarea.form-control(type="text" rows="10" name="description")
+    .mb-5
+      label.form-label(for="formFile") Обложка
+      input.form-control(type="file" id="formFile" name="file")
+
+    button(type="submit").btn.btn-primary Сохранить

@@ -4,8 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "go": "nodemon ./src/app.js",
-    "server": "nodemon ./src/server/server.js",
+    "go": "nodemon ./index.js",
     "public": "webpack --watch --config webpack.config.js"
   },
   "author": "",

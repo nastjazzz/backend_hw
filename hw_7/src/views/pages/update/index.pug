@@ -1,0 +1,15 @@
+extends ../../layout.pug
+
+block variables
+  - var customTitle = 'Редактировать книгу'
+
+block head 
+
+block content
+  +pageTitle("Редактировать книгу")
+  .row.justify-content-md-center 
+    .col-sm-5
+      +form(true, "form-update-book")
+      
+block scripts 
+  script(src='/update/index.js')

@@ -1,0 +1,20 @@
+extends ../../layout.pug
+
+block variables
+  - var customTitle = 'Информация о книге'
+
+block content 
+  +pageTitle("Информация о книге")
+  .row.justify-content-md-center 
+    .col-sm-7
+      .card.mb-3
+        .row.g-0
+          .col-md-4
+            +cover(book.cover)
+          .col-md-8
+            h5.card-header= book.title
+            .card-body
+              p.card-text= book.authors.join(", ")
+              p.card-text= book.description
+              a.btn.btn-primary(href="/update/"+ book.id) Редактировать
+      

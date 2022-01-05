@@ -21,7 +21,7 @@ class Book {
     return foundBook ? foundBook : -1;
   }
 
-  async updateBookById(id, { title, authors, description, file }) {
+  updateBookById(id, { title, authors, description, file }) {
     const books = this.getAllBooks();
     const foundId = this.findBookIndex(id, books);
 
@@ -37,7 +37,7 @@ class Book {
     return foundId + 1;
   }
 
-  async createNewBook({ title, authors, description, file }) {
+  createNewBook({ title, authors, description, file }) {
     const books = this.getAllBooks();
     const newBookId = books.length + 1;
 
@@ -46,7 +46,7 @@ class Book {
       title,
       authors: [authors],
       description,
-      cover: `/uploads/${file}`,
+      cover: file ? `/uploads/${file}` : '',
     };
     books.push(newBook);
 

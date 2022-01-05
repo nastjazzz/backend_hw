@@ -6,7 +6,7 @@ updateForm.addEventListener('submit', (e) => {
 
   const id = window.location.href.split('/update/')[1];
 
-  fetch(`http://localhost:5000/api/book/${id}`, {
+  fetch(`http://localhost:3000/api/book/${id}`, {
     method: 'PUT',
     body: formData,
   })

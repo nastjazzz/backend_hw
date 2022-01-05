@@ -10,9 +10,6 @@ block head
 block content 
   +pageTitle("Книги")
   .books.px-3
-    .row.row-1.pb-3
-      h4.col-5 Заголовок
-      h4.col-2 Авторы
     each book in allBooks 
       .row.align-items-center.pt-2.pb-2
         .col= book.title 

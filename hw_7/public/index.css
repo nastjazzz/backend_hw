@@ -1,9 +1,0 @@
-.books .row:nth-child(odd) {
-  background: #e2e2e2;
-}
-.books .row:nth-child(even) {
-  background: #ebebeb;
-}
-.books .row-1 {
-  background: none !important;
-}

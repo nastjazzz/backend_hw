@@ -2,6 +2,7 @@ const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const defaultConfig = {
+  mode: 'production',
   plugins: [new MiniCssExtractPlugin()],
   devtool: 'source-map',
   module: {
@@ -30,12 +31,11 @@ const defaultConfig = {
   },
 };
 
-const configs = ['create', 'update'].map((viewName) => {
+const configs = ['books', 'create', 'update'].map((viewName) => {
   return {
     entry: {
       index: `./src/views/pages/${viewName}/assets/index.js`,
     },
-    mode: 'production',
     output: {
       path: path.resolve(__dirname, `./public/${viewName}/`),
       filename: `[name].js`,

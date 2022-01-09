@@ -1,0 +1,18 @@
+extends ../../layout.pug
+
+block variables
+  - var customTitle = 'Книги'
+
+block head 
+  link(rel="stylesheet" href="/books/index.css")
+
+block content 
+  +pageTitle("Книги")
+  .books.px-3
+    each book in allBooks 
+      .row.align-items-center.pt-2.pb-2
+        .col= book.title 
+        .col= book.authors
+        .col.d-flex.justify-content-end
+          a.btn.btn-primary(href="/book/" + book.id) Просмотр
+          a.btn.btn-primary.mx-3(href="/update/" + book.id) Редактировать

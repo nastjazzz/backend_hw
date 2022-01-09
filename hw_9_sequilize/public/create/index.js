@@ -1,0 +1,2 @@
+(()=>{var o=document.querySelector(".form-create-book");o.addEventListener("submit",(function(t){t.preventDefault();var n=new FormData(o);fetch("http://localhost:8080/api/books",{method:"POST",body:n}).then((function(o){return o.json()})).then((function(o){window.location="/book/"+o.id})).catch((function(o){return console.log("Error:",o)}))}))})();
+//# sourceMappingURL=index.js.map

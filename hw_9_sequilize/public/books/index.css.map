@@ -1,0 +1,1 @@
+{"version":3,"file":"index.css","mappings":"AACE,2BACE,mBAGF,4BACE,mB","sources":["webpack://hw_9_sequilize/./src/views/pages/books/assets/index.scss"],"sourcesContent":[".books {\r\n  .row:nth-child(odd) {\r\n    background: #e2e2e2;\r\n  }\r\n\r\n  .row:nth-child(even) {\r\n    background: #ebebeb;\r\n  }\r\n}\r\n"],"names":[],"sourceRoot":""}

@@ -28,7 +28,8 @@ app.get('/book/:id', (req, res) => {
   const { id } = req.params;
   const foundBook = book.getBookById(id);
 
-  if (foundBook === -1) return res.status(404).send('нет книги с таким id');
+  if (foundBook === -1)
+    return res.status(404).json({ error: 'нет книги с таким id' });
   res.render('pages/view', { book: foundBook });
 });
 
@@ -42,7 +43,8 @@ app.get('/update/:id', (req, res) => {
   const { id } = req.params;
 
   const foundBook = book.getBookById(id);
-  if (foundBook === -1) return res.status(404).send('нет книги с таким id');
+  if (foundBook === -1)
+    return res.status(404).json({ error: 'нет книги с таким id' });
   res.render('pages/update', { book: foundBook });
 });
 

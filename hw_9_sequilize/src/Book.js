@@ -10,12 +10,12 @@ class BookHandler {
 
     const allBooks = rawBooks.reduce((acc, item) => {
       const bookInfo = {
-        id: item.dataValues.id,
-        title: item.dataValues.title,
-        description: item.dataValues.description,
-        cover: item.dataValues.cover,
+        id: item.id,
+        title: item.title,
+        description: item.description,
+        cover: item.cover,
         // какая-то хрень((
-        authors: item.BooksAuthors[0].dataValues.name,
+        authors: item.BooksAuthors[0].name,
       };
 
       console.log("bookInfo=======", bookInfo);
@@ -37,14 +37,15 @@ class BookHandler {
         association: "BooksAuthors",
       },
     });
+    console.log('foundBook==========',foundBook)
 
     const bookInfo = {
-      id: foundBook.dataValues.id,
-      title: foundBook.dataValues.title,
-      description: foundBook.dataValues.description,
-      cover: foundBook.dataValues.cover,
+      id: foundBook.id,
+      title: foundBook.title,
+      description: foundBook.description,
+      cover: foundBook.cover,
       // какая-то хрень((
-      authors: foundBook.BooksAuthors[0].dataValues.name,
+      authors: foundBook.BooksAuthors[0].name,
     };
 
     console.log("####################################\n", bookInfo);
@@ -86,7 +87,7 @@ class BookHandler {
       }
     );
 
-    console.log(bookInfo);
+    // console.log(bookInfo);
     return id;
   }
 }

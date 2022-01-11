@@ -20,20 +20,22 @@ app.get('/', (req, res) => {
 // просмотр списка всех книг
 app.get('/books', async (req, res) => {
   const allBooks = await book.getAllBooks();
-  console.log('allBooks====', allBooks);
+  // console.log('allBooks====', allBooks);
   res.render('pages/books', { allBooks });
 });
 
 // просмотр конкретной книги
-// app.get('/book/:id', async (req, res) => {
-//   const { id } = req.params;
-//   const foundBook = await book.getBookById(id);
-//   console.log('foundBook.dataValues=========', foundBook.dataValues);
+app.get('/book/:id', async (req, res) => {
+  const { id } = req.params;
+  const foundBook = await book.getBookById(id);
+  // console.log('foundBook.dataValues=========', foundBook.dataValues);
 
-//   if (foundBook === -1)
-//     return res.status(404).json({ error: 'нет книги с таким id' });
-//   res.render('pages/view', { book: foundBook });
-// });
+  if (foundBook === -1)
+    return res.status(404).json({ error: 'нет книги с таким id' });
+
+
+  res.render('pages/view', { book: foundBook });
+});
 
 // просмотр формы для создания книги
 app.get('/create', (req, res) => {
@@ -41,14 +43,14 @@ app.get('/create', (req, res) => {
 });
 
 // просмотр формы для редактирования книги
-// app.get('/update/:id', async (req, res) => {
-//   const { id } = req.params;
+app.get('/update/:id', async (req, res) => {
+  const { id } = req.params;
 
-//   const foundBook = await book.getBookById(id);
-//   if (foundBook === -1)
-//     return res.status(404).json({ error: 'нет книги с таким id' });
-//   res.render('pages/update', { book: foundBook });
-// });
+  const foundBook = await book.getBookById(id);
+  if (foundBook === -1)
+    return res.status(404).json({ error: 'нет книги с таким id' });
+  res.render('pages/update', { book: foundBook });
+});
 
 // создание книги
 app.post('/api/books', upload.single('file'), async (req, res) => {

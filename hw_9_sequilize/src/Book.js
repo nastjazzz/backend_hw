@@ -1,12 +1,28 @@
-const BookModel = require('../db/models');
+const { Book, Author } = require("../db/models");
 
-class Book {
+class BookHandler {
   async getAllBooks() {
-    const rawBooks = await BookModel.findAll();
-    console.log('rawBooks===========', rawBooks);
+    const rawBooks = await Book.findAll({
+      include: {
+        association: "BooksAuthors",
+      },
+    });
 
-    const allBooks = [];
-    rawBooks.forEach((book) => allBooks.push(book.dataValues));
+    const allBooks = rawBooks.reduce((acc, item) => {
+      const bookInfo = {
+        id: item.dataValues.id,
+        title: item.dataValues.title,
+        description: item.dataValues.description,
+        cover: item.dataValues.cover,
+        // какая-то хрень((
+        authors: item.BooksAuthors[0].dataValues.name,
+      };
+
+      console.log("bookInfo=======", bookInfo);
+
+      acc.push(bookInfo);
+      return acc;
+    }, []);
     return allBooks;
   }
 
@@ -15,34 +31,64 @@ class Book {
   };
 
   async getBookById(id) {
-    const foundBook = await BookModel.findOne({ where: { id: id } });
-    return foundBook ? foundBook : -1;
+    const foundBook = await Book.findOne({
+      where: { id },
+      include: {
+        association: "BooksAuthors",
+      },
+    });
+
+    const bookInfo = {
+      id: foundBook.dataValues.id,
+      title: foundBook.dataValues.title,
+      description: foundBook.dataValues.description,
+      cover: foundBook.dataValues.cover,
+      // какая-то хрень((
+      authors: foundBook.BooksAuthors[0].dataValues.name,
+    };
+
+    console.log("####################################\n", bookInfo);
+
+    return foundBook ? bookInfo : -1;
   }
 
   async createNewBook({ title, authors, description, file }) {
-    console.log('createNewBook', { title, authors, description });
-
-    const newBook = await BookModel.create({
-      title,
-      description,
-      cover: file,
-    });
-
-    console.log('createNewBook', newBook.id, newBook);
+    const newBook = await Book.create(
+      {
+        title,
+        description,
+        cover: file,
+        BooksAuthors: {
+          name: authors,
+        },
+      },
+      {
+        include: {
+          association: "BooksAuthors",
+        },
+      }
+    );
     return newBook.id;
   }
 
-  // async updateBookById(id, { title, authors, description, file }) {
-  //   await BookModel.update(
-  //     { title, authors, description, cover: file },
-  //     {
-  //       where: {
-  //         id,
-  //       },
-  //     }
-  //   );
-  //   return id;
-  // }
+  async updateBookById(id, { title, authors, description, file }) {
+    await Book.update(
+      { title, description, cover: file, BooksAuthors: { name: authors } },
+      {
+        where: {
+          id,
+        },
+      },
+      {
+        include: {
+          association: "BooksAuthors",
+        },
+      }
+    );
+
+    console.log(bookInfo);
+    return id;
+  }
 }
 
-module.exports = Book;
+module.exports = BookHandler;

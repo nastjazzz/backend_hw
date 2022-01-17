@@ -8,8 +8,6 @@ const port = 8080;
 
 const book = new Book();
 
-const jsonParser = express.json();
-
 app.use(express.static('public'));
 app.set('views', path.join(__dirname, 'src/views'));
 app.set('view engine', 'pug');
@@ -46,15 +44,16 @@ app.get('/update/:id', async (req, res) => {
   const { id } = req.params;
 
   const foundBook = await book.getBookById(id);
+
   if (foundBook === -1)
     return res.status(404).json({ error: 'нет книги с таким id' });
+
   res.render('pages/update', { book: foundBook });
 });
 
 // поиск
 app.get('/search', async (req, res) => {
   const query = req.query;
-  console.log(req.query);
 
   if (!Object.keys(query).length) res.render('pages/search');
   else {
@@ -62,9 +61,8 @@ app.get('/search', async (req, res) => {
 
     if (books === -1)
       res.status(404).json({ error: 'Произошла ошибка при поиске :(' });
-    else {
-      res.render('pages/search', { books });
-    }
+
+    res.render('pages/search', { books });
   }
 });
 
@@ -76,6 +74,10 @@ app.post('/api/books', upload.single('file'), async (req, res) => {
     ...requestData,
     file: req?.file?.filename,
   });
+
+  if (id === -1)
+    res.status(404).json({ error: 'Произошла ошибка при создании книги :(' });
+
   res.send({ id });
 });
 
@@ -94,33 +96,6 @@ app.put('/api/book/:id', upload.single('file'), async (req, res) => {
 
   res.send({ id: foundId });
 });
-
-app.post('/api/search', upload.none(), async (req, res) => {
-  const requestData = req.body;
-  console.log({ requestData });
-
-  const books = await book.getBooksByAuthor({ ...requestData });
-
-  if (books === -1)
-    res.status(404).json({ error: 'Произошла ошибка при поиске :(' });
-
-  // res.render('pages/search-result', { books });
-  // console.log(books);
-});
-
-// app.get('/search/?params', upload.none(), async (req, res) => {
-//   const params = req.params;
-//   const requestData = req.body;
-//   console.log('&&&&&&&&&&&&&&&&&&&&&&&77', { requestData, params });
-
-//   // const books = await book.getBooksByAuthor({ ...requestData });
-
-//   // if (books === -1)
-//   //   res.status(404).json({ error: 'Произошла ошибка при поиске :(' });
-
-//   // res.render('pages/search-result', { books });
-//   // console.log(books);
-// });
 
 app.listen(port, () => {
   console.log(`Server listening on the port::${port}`);

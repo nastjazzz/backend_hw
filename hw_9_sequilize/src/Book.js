@@ -1,20 +1,8 @@
 const { Book, Author } = require('../db/models');
-const { Op } = require('sequelize');
 
 class BookHandler {
-  async getAllBooks() {
-    const rawBooks = await Book.findAll({
-      include: {
-        association: 'BooksAuthors',
-        // если мне не нужны данные из junction table,
-        // то можно указать доп параметры и они не будут показаны
-        through: {
-          attributes: [],
-        },
-      },
-    });
-
-    const allBooks = rawBooks.reduce((acc, item) => {
+  createAllBooks(rawBooks) {
+    return rawBooks.reduce((acc, item) => {
       const { id, title, description, cover, BooksAuthors } = item;
 
       acc.push({
@@ -26,8 +14,22 @@ class BookHandler {
       });
       return acc;
     }, []);
-    console.log(allBooks);
-    return allBooks;
+  }
+
+  async getAllBooks() {
+    try {
+      const rawBooks = await Book.findAll({
+        include: {
+          association: 'BooksAuthors',
+          through: {
+            attributes: [],
+          },
+        },
+      });
+      return this.createAllBooks(rawBooks);
+    } catch (err) {
+      console.log('Ошибка в getAllBooks', err);
+    }
   }
 
   async getBookById(id) {
@@ -38,34 +40,34 @@ class BookHandler {
           association: 'BooksAuthors',
         },
       });
-      const bookInfo = {
+
+      return {
         id: book.id,
         title: book.title,
         description: book.description,
         cover: book.cover,
         authors: book.BooksAuthors[0].name,
       };
-
-      return bookInfo;
     } catch (err) {
-      console.log(err);
+      console.log('Ошибка в getBookById', err);
       return -1;
     }
   }
 
   async createNewBook({ title, authors, description, file }) {
-    const [author] = await Author.findOrCreate({ where: { name: authors } });
     try {
+      const [author] = await Author.findOrCreate({ where: { name: authors } });
       const newBook = await Book.create({
         title,
         description,
         cover: file && `/uploads/${file}`,
       });
       await newBook.setBooksAuthors(author.id);
-      console.log(JSON.stringify(newBook, null, 2));
+      // console.log(JSON.stringify(newBook, null, 2));
       return newBook.id;
-    } catch (e) {
-      console.log(e);
+    } catch (err) {
+      console.log('Ошибка в createNewBook', err);
+      return -1;
     }
   }
 
@@ -86,7 +88,7 @@ class BookHandler {
       await book.setBooksAuthors(author.id);
       return book.id;
     } catch (err) {
-      console.log('Ошибка при обновлении книги', err);
+      console.log('Ошибка в updateBookById', err);
       return -1;
     }
   }
@@ -104,21 +106,7 @@ class BookHandler {
           },
         ],
       });
-      console.log({ foundRawBooks });
-
-      const books = foundRawBooks.reduce((acc, item) => {
-        const { id, title, description, cover, BooksAuthors } = item;
-
-        acc.push({
-          id,
-          title,
-          description,
-          cover,
-          authors: BooksAuthors[0].name,
-        });
-        return acc;
-      }, []);
-      return books;
+      return this.createAllBooks(foundRawBooks);
     } catch (err) {
       console.log('Ошибка в getBooksByAuthor', err);
       return -1;

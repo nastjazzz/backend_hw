@@ -6,7 +6,7 @@ const books = require('./books');
 const Author = sequelize.define('Author', {
   name: {
     type: DataTypes.STRING,
-    // allowNull: false,
+    allowNull: false,
   },
 });
 
@@ -30,17 +30,14 @@ Author.belongsToMany(Book, { through: 'Book_Authors', as: 'BooksAuthors' });
   console.log(
     '======================= Синхронизация прошла! ======================='
   );
-})();
 
-(async () => {
-  const booksNumber = await Book.count({
-    include: { association: 'BooksAuthors' },
-  });
-  console.log({ booksNumber });
-  if (booksNumber === 0) {
-    books.forEach(async (book) => {
-      const { title, description, authors, cover } = book;
-      try {
+  try {
+    const booksNumber = await Book.count({
+      include: { association: 'BooksAuthors' },
+    });
+    if (booksNumber === 0) {
+      books.forEach(async (book) => {
+        const { title, description, authors, cover } = book;
         await Book.create(
           {
             title,
@@ -56,10 +53,10 @@ Author.belongsToMany(Book, { through: 'Book_Authors', as: 'BooksAuthors' });
             },
           }
         );
-      } catch (err) {
-        console.log('error========', err);
-      }
-    });
+      });
+    }
+  } catch (err) {
+    console.log('error========', err);
   }
 })();
 

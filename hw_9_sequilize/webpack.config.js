@@ -31,7 +31,7 @@ const defaultConfig = {
   },
 };
 
-const configs = ['books', 'create', 'search', 'update'].map((viewName) => {
+const configs = ['books', 'create', 'update'].map((viewName) => {
   return {
     entry: {
       index: `./src/views/pages/${viewName}/assets/index.js`,

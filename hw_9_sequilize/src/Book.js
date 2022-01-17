@@ -1,94 +1,128 @@
-const { Book, Author } = require("../db/models");
+const { Book, Author } = require('../db/models');
+const { Op } = require('sequelize');
 
 class BookHandler {
   async getAllBooks() {
     const rawBooks = await Book.findAll({
       include: {
-        association: "BooksAuthors",
+        association: 'BooksAuthors',
+        // если мне не нужны данные из junction table,
+        // то можно указать доп параметры и они не будут показаны
+        through: {
+          attributes: [],
+        },
       },
     });
 
     const allBooks = rawBooks.reduce((acc, item) => {
-      const bookInfo = {
-        id: item.id,
-        title: item.title,
-        description: item.description,
-        cover: item.cover,
-        // какая-то хрень((
-        authors: item.BooksAuthors[0].name,
-      };
+      const { id, title, description, cover, BooksAuthors } = item;
 
-      console.log("bookInfo=======", bookInfo);
-
-      acc.push(bookInfo);
+      acc.push({
+        id,
+        title,
+        description,
+        cover,
+        authors: BooksAuthors[0].name,
+      });
       return acc;
     }, []);
+    console.log(allBooks);
     return allBooks;
   }
 
-  findBookById = (id, books) => {
-    return books.find((book) => Number(id) === Number(book.id));
-  };
-
   async getBookById(id) {
-    const foundBook = await Book.findOne({
-      where: { id },
-      include: {
-        association: "BooksAuthors",
-      },
-    });
-    console.log('foundBook==========',foundBook)
+    try {
+      const book = await Book.findOne({
+        where: { id },
+        include: {
+          association: 'BooksAuthors',
+        },
+      });
+      const bookInfo = {
+        id: book.id,
+        title: book.title,
+        description: book.description,
+        cover: book.cover,
+        authors: book.BooksAuthors[0].name,
+      };
 
-    const bookInfo = {
-      id: foundBook.id,
-      title: foundBook.title,
-      description: foundBook.description,
-      cover: foundBook.cover,
-      // какая-то хрень((
-      authors: foundBook.BooksAuthors[0].name,
-    };
-
-    console.log("####################################\n", bookInfo);
-
-    return foundBook ? bookInfo : -1;
+      return bookInfo;
+    } catch (err) {
+      console.log(err);
+      return -1;
+    }
   }
 
   async createNewBook({ title, authors, description, file }) {
-    const newBook = await Book.create(
-      {
+    const [author] = await Author.findOrCreate({ where: { name: authors } });
+    try {
+      const newBook = await Book.create({
         title,
         description,
-        cover: file,
-        BooksAuthors: {
-          name: authors,
-        },
-      },
-      {
-        include: {
-          association: "BooksAuthors",
-        },
-      }
-    );
-    return newBook.id;
+        cover: file && `/uploads/${file}`,
+      });
+      await newBook.setBooksAuthors(author.id);
+      console.log(JSON.stringify(newBook, null, 2));
+      return newBook.id;
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   async updateBookById(id, { title, authors, description, file }) {
-    await Book.update(
-      { title, description, cover: file, BooksAuthors: { name: authors } },
-      {
-        where: {
-          id,
-        },
-      },
-      {
+    try {
+      const book = await Book.findOne({
+        where: { id },
         include: {
-          association: "BooksAuthors",
+          association: 'BooksAuthors',
         },
-      }
-    );
+      });
+      const [author] = await Author.findOrCreate({ where: { name: authors } });
+      await book.update({
+        title,
+        description,
+        cover: file && `/uploads/${file}`,
+      });
+      await book.setBooksAuthors(author.id);
+      return book.id;
+    } catch (err) {
+      console.log('Ошибка при обновлении книги', err);
+      return -1;
+    }
+  }
 
-    // console.log(bookInfo);
-    return id;
+  async getBooksByAuthor({ authors }) {
+    try {
+      const foundRawBooks = await Book.findAll({
+        include: [
+          {
+            model: Author,
+            as: 'BooksAuthors',
+            where: {
+              name: authors,
+            },
+          },
+        ],
+      });
+      console.log({ foundRawBooks });
+
+      const books = foundRawBooks.reduce((acc, item) => {
+        const { id, title, description, cover, BooksAuthors } = item;
+
+        acc.push({
+          id,
+          title,
+          description,
+          cover,
+          authors: BooksAuthors[0].name,
+        });
+        return acc;
+      }, []);
+      return books;
+    } catch (err) {
+      console.log('Ошибка в getBooksByAuthor', err);
+      return -1;
+    }
   }
 }
 
